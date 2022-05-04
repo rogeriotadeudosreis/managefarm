@@ -9,6 +9,7 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.service.ResponseMessage;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -16,6 +17,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/*
+    Acessar documentação: http://localhost:8080/swagger-ui.html#/
+ */
 
 @Configuration
 @EnableSwagger2
@@ -39,7 +44,7 @@ public class SwaggerConfig {
                 .version("1.0.0")
                 .license("Apache License Version 2.0")
                 .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
-//                .contact(new Contact("Rogério Carvalho", "", "carvalho@gmail.com"))
+                .contact(new Contact("Rogério Carvalho", "62985915534", "carvalho@gmail.com"))
                 .build();
     }
 
