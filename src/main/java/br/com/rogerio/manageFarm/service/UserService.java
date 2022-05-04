@@ -47,7 +47,7 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> findByNome (String nome){
+    public List<User> findByName(String nome){
         List<User> listUsersByNome = repository.findByName(nome);
         if (listUsersByNome.isEmpty()){
             return null;
