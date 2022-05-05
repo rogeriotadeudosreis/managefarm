@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -29,6 +30,9 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,26 +40,27 @@ public class User implements Serializable {
 
     @NotNull
     @NotEmpty
-    @Length(min = 3, message = "O nome do usuário deve ter no mínimo 03 caracteres")
+    @Length(min = 3, message = "O nome do usuário deve ter no mínimo 03(três) caracteres")
     @Column(name = "NOME")
     private String name;
 
     @NotNull
     @NotEmpty
-    @Length(min = 3, message = "O sobrenome deve ter no mínimo 03 caracteres")
+    @Length(min = 3, message = "O sobrenome do usuário deve ter no mínimo 03(três) caracteres")
     @Column(name = "SOBRENOME")
     private String lastName;
 
     @NotNull
     @NotEmpty
-    @Length(min = 3, message = "O userName deve ter no mínimo 03 caracteres")
+    @Length(min = 3, message = "O userName do usuário deve ter no mínimo 03(três) caracteres")
     @Column(name = "USERNAME")
+    @Email(regexp = EMAIL_PATTERN, message = "O email informado está no formato incorreto.")
     private String username;
 
     @NotNull
     @NotEmpty
-    @Length(min = 4, message = "A senha deve ter no mínimo 04 caracteres")
-    @Length(max = 8, message = "A senha deve ter no máximo 08 caracteres")
+    @Length(min = 4, message = "A senha deve ter no mínimo 04(quatro) caracteres")
+    @Length(max = 8, message = "A senha deve ter no máximo 08(oito) caracteres")
     @Column(name = "SENHA")
     private String password;
 
@@ -68,7 +73,7 @@ public class User implements Serializable {
     }
 
     @PreUpdate
-    public void onUpdate(){
+    public void onUpdate() {
         this.dateTime = LocalDate.now();
     }
 }
