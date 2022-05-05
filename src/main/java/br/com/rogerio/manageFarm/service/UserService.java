@@ -48,20 +48,11 @@ public class UserService {
 
     @Transactional
     public List<User> findByName(String nome){
-        List<User> listUsersByNome = repository.findByName(nome);
+        List<User> listUsersByNome = repository.findByNameIgnoreCase(nome);
         if (listUsersByNome.isEmpty()){
             return null;
         }
         return listUsersByNome;
-    }
-
-    @Transactional
-    public List<User> findBySobreNome (String nome){
-        List<User> listUsersBySobreNome = repository.findBylastName(nome);
-        if (listUsersBySobreNome.isEmpty()){
-            return null;
-        }
-        return listUsersBySobreNome;
     }
 
     @Transactional

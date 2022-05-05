@@ -142,26 +142,6 @@ public class UserController {
     }
 
     /*
-        Retornar uma lista de usuário do sistema pelo sobrenome
-     */
-    @GetMapping(path = "/listar-por-sobrenome/{sobrenome}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Retorna uma lista de usuários pelo sobrenome.", notes = "Retorna uma lista de usuários pelo sobrenome da base de dados.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Ok.", response = User.class),
-            @ApiResponse(code = 204, message = "Sem retorno de dados"),
-            @ApiResponse(code = 404, message = "Recurso não encontrado."),
-            @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
-    })
-    public ResponseEntity<List<User>> listarPorSobreNome(@PathVariable String sobrenome) {
-        List<User> listaSobrenome = userService.findBySobreNome(sobrenome);
-        if (listaSobrenome.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(listaSobrenome);
-    }
-
-    /*
         Consultar um usuário do sistema pelo seu identificador
      */
     @GetMapping(path = "/buscar-por-id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
