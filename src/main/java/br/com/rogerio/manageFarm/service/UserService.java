@@ -56,6 +56,15 @@ public class UserService {
     }
 
     @Transactional
+    public List<User> findByEmail(String email){
+        List<User> listUsersByEmail = repository.findByUsernameIgnoreCase(email);
+        if (listUsersByEmail.isEmpty()){
+            return null;
+        }
+        return listUsersByEmail;
+    }
+
+    @Transactional
     public User findById(Long id){
         Optional<User> optional = repository.findById(id);
             User user = optional.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
