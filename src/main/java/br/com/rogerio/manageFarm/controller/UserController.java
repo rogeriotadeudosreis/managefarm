@@ -1,12 +1,14 @@
 package br.com.rogerio.manageFarm.controller;
 
+import br.com.rogerio.manageFarm.dto.UserDto;
 import br.com.rogerio.manageFarm.model.User;
 import br.com.rogerio.manageFarm.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +22,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import springfox.documentation.swagger.readers.operation.ResponseHeaders;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/user")
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    private final ModelMapper mapper;
 
     /*
         Salvar usuário no sistema
@@ -49,10 +53,11 @@ public class UserController {
             @ApiResponse(code = 415, message = "O formato de média dos dados requisitados não é suportado pelo servidor."),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
     })
-    public ResponseEntity<User> salvar(@RequestBody @Valid User user, UriComponentsBuilder uriBuilder) {
-        userService.create(user);
-        URI uri = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(uri).body(user);
+    public ResponseEntity<UserDto> salvar(@RequestBody @Valid User user, UriComponentsBuilder uriBuilder) {
+        User userSalvo = userService.create(user);
+        UserDto dto = mapper.map(userSalvo, UserDto.class);
+        URI uri = uriBuilder.path("/api/user/{id}").buildAndExpand(dto.getId()).toUri();
+        return ResponseEntity.created(uri).body(dto);
     }
 
     /*
@@ -124,7 +129,7 @@ public class UserController {
     /*
         Retornar uma lista de usuário do sistema pelo nome completo
      */
-    @GetMapping(path = "/listar-por-nome/{nome}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/consultar-por-nome/{nome}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Retorna uma lista de usuários por nome.", notes = "Retorna uma lista de usuários por nome da base de dados.")
     @ApiResponses(value = {
@@ -144,27 +149,24 @@ public class UserController {
     /*
         Retornar uma lista de usuário do sistema pelo email
      */
-    @GetMapping(path = "/listar-por-email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/consultar-por-email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Retorna uma lista de usuários pelo email.", notes = "Retorna uma lista de usuários pelo email da base de dados.")
+    @ApiOperation(value = "Retorna um registro de usuário pelo email.", notes = "Retorna um registro de usuário pelo email da base de dados.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok.", response = User.class),
             @ApiResponse(code = 204, message = "Sem retorno de dados"),
             @ApiResponse(code = 404, message = "Recurso não encontrado."),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
     })
-    public ResponseEntity<List<User>> listarPorEmail(@PathVariable String email) {
-        List<User> listaPorEmail = userService.findByEmail(email);
-        if (listaPorEmail.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(listaPorEmail);
+    public ResponseEntity<User> consultarPorEmail(@PathVariable String email) {
+        User userPorEmail = userService.findByEmail(email);
+        return ResponseEntity.ok().body(userPorEmail);
     }
 
     /*
         Consultar um usuário do sistema pelo seu identificador
      */
-    @GetMapping(path = "/buscar-por-id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/consultar-por-id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Retorna um usuário pelo identificador.", notes = "Retorna um usuário pelo identificador da base de dados.")
     @ApiResponses(value = {

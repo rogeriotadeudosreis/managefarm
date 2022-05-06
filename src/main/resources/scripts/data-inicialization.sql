@@ -1,15 +1,9 @@
--- insert na tabela de usuários do sistema
---INSERT INTO public.tb_user (data_cadastro, sobrenome, nome, senha, username) VALUES('2022-05-04', 'Reis', 'André Luiz Avelino dos Rei', '123456', 'andre@gmail.com');
---INSERT INTO public.tb_user (data_cadastro, sobrenome, nome, senha, username) VALUES('2022-05-04', 'Reis', 'Débora Regina Avelino dos Reis', '123456', 'debora@gmail.com');
---INSERT INTO public.tb_user (data_cadastro, sobrenome, nome, senha, username) VALUES('2022-05-04', 'Reis', 'Ivone Costa Reis', '123456', 'ivone@gmail.com');
---INSERT INTO public.tb_user (data_cadastro, sobrenome, nome, senha, username) VALUES('2022-05-04', 'Bento', 'Ricardo Bento', '123456', 'ricardo@gmail.com');
---INSERT INTO public.tb_user (data_cadastro, sobrenome, nome, senha, username) VALUES('2022-05-04', 'Reis', 'Rogerio Tadeu dos Reis', '123456', 'rogerio@gmail.com');
+-- inserts
+INSERT INTO public.tb_user (data_inicial,sobrenome,nome,senha,username,data_atualizada,ativo,telefone,perfil) VALUES
+('2022-05-05 15:59:00', 'Reis', 'André Luiz Avelino dos Reis', '123456', 'andre@gmail.com',NULL,true,NULL,'ADMINISTRADOR'),
+('2022-05-05 15:59:10', 'Avelino', 'Débora Regina Avelino dos Reis', '123456', 'debora@gmail.com',NULL,true,NULL,'USUARIO'),
+('2022-05-05 15:59:15', 'Costa', 'Ivone Costa Reis', '123456', 'ivone@gmail.com',NULL,true,NULL,'ADMINISTRADOR'),
+('2022-05-05 15:59:20', 'Bento', 'Ricardo Bento', '123456', 'ricardo@gmail.com',NULL,true,NULL,'USUARIO'),
+('2022-05-05 15:59:25', 'Reis', 'Rogerio Tadeu dos Reis', '123456', 'rogerio@gmail.com',NULL,true,62985915534,'ADMINISTRADOR'),
+('2022-05-05 15:59:30', 'Paulista', 'Francisco Jd Paulista', '123456', 'francisco@gmail.com',NULL,true,NULL,'USUARIO');
 
-INSERT INTO public.tb_user (data_cadastro, sobrenome, nome, senha, username)
-VALUES
-('2022-05-04', 'Reis', 'André Luiz Avelino dos Rei', '123456', 'andre@gmail.com'),
-('2022-05-04', 'Reis', 'Débora Regina Avelino dos Reis', '123456', 'debora@gmail.com'),
-('2022-05-04', 'Reis', 'Ivone Costa Reis', '123456', 'ivone@gmail.com'),
-('2022-05-04', 'Bento', 'Ricardo Bento', '123456', 'ricardo@gmail.com'),
-('2022-05-04', 'Reis', 'Rogerio Tadeu dos Reis', '123456', 'rogerio@gmail.com'),
-('2022-05-04', 'Francisco', 'Francisco Jd Paulista', '123456', 'francisco@gmail.com');

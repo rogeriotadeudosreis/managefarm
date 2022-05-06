@@ -16,58 +16,63 @@ public class UserService {
     private UserRepository repository;
 
     @Transactional
-    public User create(User user){
-        if (user.getId() == null){
-            User userSave = repository.save(user);
-            return userSave;
-        }
-        return user;
+    public User create(User user) {
+        System.out.println(verifyUserExists(user));
+        verifyUserExists(user);
+        User userSave = repository.save(user);
+        return userSave;
     }
 
     @Transactional
-    public User update(User user){
+    public User update(User user) {
         findById(user.getId());
         User userUpdate = repository.save(user);
         return userUpdate;
     }
 
     @Transactional
-    public List<User> findAll(){
+    public List<User> findAll() {
         List<User> listUsers = repository.findAll();
-        if (listUsers.isEmpty()){
+        if (listUsers.isEmpty()) {
             return null;
         }
         return listUsers;
     }
 
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         findById(id);
         repository.deleteById(id);
     }
 
     @Transactional
-    public List<User> findByName(String nome){
+    public List<User> findByName(String nome) {
         List<User> listUsersByNome = repository.findByNameIgnoreCase(nome);
-        if (listUsersByNome.isEmpty()){
+        if (listUsersByNome.isEmpty()) {
             return null;
         }
         return listUsersByNome;
     }
 
     @Transactional
-    public List<User> findByEmail(String email){
-        List<User> listUsersByEmail = repository.findByUsernameIgnoreCase(email);
-        if (listUsersByEmail.isEmpty()){
-            return null;
-        }
-        return listUsersByEmail;
+    public User findByEmail(String email) {
+        Optional<User> userOptional = repository.findByUsernameIgnoreCase(email);
+        User user = userOptional.orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email informado."));
+        return user;
     }
 
     @Transactional
-    public User findById(Long id){
+    public User findById(Long id) {
         Optional<User> optional = repository.findById(id);
-            User user = optional.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            return user;
+        User user = optional.orElseThrow(() -> new RuntimeException("Usuário não encontrado com o identificador informado."));
+        return user;
+    }
+
+    private boolean verifyUserExists(User user) {
+        Optional<User> userOptional = repository.findByUsernameIgnoreCase(user.getUsername());
+        if (userOptional.isPresent()) {
+            throw new RuntimeException ("Já existe um usuário no sistema com o email " + user.getUsername());
+        }
+        return false;
     }
 }
