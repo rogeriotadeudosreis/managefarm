@@ -1,7 +1,10 @@
 package br.com.rogerio.manageFarm.service;
 
+import br.com.rogerio.manageFarm.dto.UserUpdateDto;
 import br.com.rogerio.manageFarm.model.User;
 import br.com.rogerio.manageFarm.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,11 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository repository;
+
+    private final ModelMapper mapper;
 
     @Transactional
     public User create(User user) {
@@ -24,10 +30,17 @@ public class UserService {
     }
 
     @Transactional
-    public User update(User user) {
-        findById(user.getId());
-        User userUpdate = repository.save(user);
-        return userUpdate;
+    public User update(UserUpdateDto dto) {
+        User userUpdate = findById(dto.getId());
+
+        userUpdate.setId(dto.getId());
+        userUpdate.setName(dto.getName());
+        userUpdate.setLastName(dto.getLastName());
+        userUpdate.setUsername(dto.getUsername());
+        userUpdate.setPhone(dto.getPhone());
+        userUpdate.setPassword(dto.getPassword());
+
+        return repository.save(userUpdate);
     }
 
     @Transactional
@@ -71,7 +84,7 @@ public class UserService {
     private boolean verifyUserExists(User user) {
         Optional<User> userOptional = repository.findByUsernameIgnoreCase(user.getUsername());
         if (userOptional.isPresent()) {
-            throw new RuntimeException ("Já existe um usuário no sistema com o email " + user.getUsername());
+            throw new RuntimeException("Já existe um usuário no sistema com o email " + user.getUsername());
         }
         return false;
     }

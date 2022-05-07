@@ -65,7 +65,7 @@ public class User implements Serializable {
     private String username;
 
     @Length(min = 10, message = "O número de telefone deve ter no mínimo 10(dez) dígitos.")
-    @Length(max = 11, message = "O número de telefone deve ter no máximo 13(treze) dígitos.")
+    @Length(max = 13, message = "O número de telefone deve ter no máximo 13(treze) dígitos.")
     @ApiModelProperty(value = "Telefone do usuário")
     @Column(name = "TELEFONE")
     private String phone;

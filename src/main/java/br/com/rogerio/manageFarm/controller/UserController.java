@@ -1,6 +1,7 @@
 package br.com.rogerio.manageFarm.controller;
 
 import br.com.rogerio.manageFarm.dto.UserDto;
+import br.com.rogerio.manageFarm.dto.UserUpdateDto;
 import br.com.rogerio.manageFarm.model.User;
 import br.com.rogerio.manageFarm.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -63,7 +66,7 @@ public class UserController {
     /*
         Alterar um usuário no sistema
      */
-    @PutMapping(path = "/atualizar{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/atualizar/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Altera um registro de usuário.", notes = "Altera o registro de user na base de dados.")
     @ApiResponses(value = {
@@ -76,15 +79,11 @@ public class UserController {
             @ApiResponse(code = 415, message = "O formato de média dos dados requisitados não é suportado pelo servidor."),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
     })
-    public ResponseEntity<User> atualizar(@RequestBody @Valid User user, UriComponentsBuilder uriBuilder) {
-        User userExists = userService.findById(user.getId());
-
-        if (userExists != null) {
-            userService.update(user);
-            URI uri = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId()).toUri();
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<UserDto> atualizar(@PathVariable Long id, @RequestBody @Valid UserUpdateDto dto) {
+        dto.setId(id);
+        User userAtualizado = userService.update(dto);
+        UserDto userDto =  mapper.map(userAtualizado, UserDto.class);
+        return ResponseEntity.ok(userDto);
     }
 
     /*

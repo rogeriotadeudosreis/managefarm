@@ -1,5 +1,6 @@
 package br.com.rogerio.manageFarm.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,13 +25,15 @@ import java.util.List;
 
 @Configuration
 @EnableSwagger2
+@ConfigurationProperties
 public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("br.com.rogerio.manageFarm.controller"))
-                .paths(PathSelectors.ant("/api/*"))
+                .paths(PathSelectors.any())
+//                .paths(PathSelectors.ant("/api/*")) com o path /api/* não apresenta a documentação no browser, estranho.....
                 .build()
                 .useDefaultResponseMessages(false)
                 .globalResponseMessage(RequestMethod.GET, responseMessageForGET())
@@ -61,6 +64,4 @@ public class SwaggerConfig {
                     .build());
         }};
     }
-
-
 }
