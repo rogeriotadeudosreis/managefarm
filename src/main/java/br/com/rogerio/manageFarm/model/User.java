@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -77,7 +78,7 @@ public class User implements UserDetails {
     @Column(name = "ATIVO")
     private boolean isActive;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @ApiModelProperty(value = "Informa o perfil do usuário")
     private List<Perfil> profiles = new java.util.ArrayList<>();
 

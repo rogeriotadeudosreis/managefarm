@@ -23,8 +23,9 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/user").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/user/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/user/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/user/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/user/listar/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/user/consultar-por-email/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/user/consultar-por-id/*").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin();
     }
