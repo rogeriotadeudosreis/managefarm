@@ -10,10 +10,13 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,14 +24,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -82,7 +84,7 @@ public class UserController {
     public ResponseEntity<UserDto> atualizar(@PathVariable Long id, @RequestBody @Valid UserUpdateDto dto) {
         dto.setId(id);
         User userAtualizado = userService.update(dto);
-        UserDto userDto =  mapper.map(userAtualizado, UserDto.class);
+        UserDto userDto = mapper.map(userAtualizado, UserDto.class);
         return ResponseEntity.ok(userDto);
     }
 
@@ -98,12 +100,17 @@ public class UserController {
             @ApiResponse(code = 404, message = "Recurso não encontrado."),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
     })
-    public ResponseEntity<List<User>> listar() {
-        List<User> lista = userService.findAll();
-        if (lista.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Page<UserDto>> listar(
+            @RequestParam(required = false) String descricao,
+            @PageableDefault(sort = "name", direction = Sort.Direction.ASC, page = 0, size = 10) Pageable paginacao) {
+
+        if (descricao == null) {
+            Page<UserDto> lista = userService.findAll(paginacao);
+            return ResponseEntity.ok(lista);
+        } else {
+            Page<UserDto> lista = userService.findByName(descricao, paginacao);
+            return ResponseEntity.ok(lista);
         }
-        return ResponseEntity.ok(lista);
     }
 
     /*
@@ -123,26 +130,6 @@ public class UserController {
             return ResponseEntity.ok(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.notFound().build();
-    }
-
-    /*
-        Retornar uma lista de usuário do sistema pelo nome completo
-     */
-    @GetMapping(path = "/consultar-por-nome/{nome}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Retorna uma lista de usuários por nome.", notes = "Retorna uma lista de usuários por nome da base de dados.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Ok.", response = User.class),
-            @ApiResponse(code = 204, message = "Sem retorno de dados"),
-            @ApiResponse(code = 404, message = "Recurso não encontrado."),
-            @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
-    })
-    public ResponseEntity<List<User>> listarPorNome(@PathVariable String nome) {
-        List<User> listaNome = userService.findByName(nome);
-        if (listaNome.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(listaNome);
     }
 
     /*

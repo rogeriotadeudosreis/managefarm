@@ -1,28 +1,31 @@
 package br.com.rogerio.manageFarm.model;
 
-import br.com.rogerio.manageFarm.enuns.EnumProfile;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -30,7 +33,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TB_USER")
-public class User implements Serializable {
+public class User implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,10 +77,9 @@ public class User implements Serializable {
     @Column(name = "ATIVO")
     private boolean isActive;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToMany(fetch = FetchType.EAGER)
     @ApiModelProperty(value = "Informa o perfil do usuário")
-    @Column(name = "PERFIL")
-    private EnumProfile profile;
+    private List<Perfil> profiles = new java.util.ArrayList<>();
 
     @NotNull
     @NotEmpty
@@ -100,12 +102,49 @@ public class User implements Serializable {
     public void onSave() {
         this.isActive = true;
         this.initialDate = LocalDateTime.now();
-        this.profile = EnumProfile.USUARIO;
     }
 
     @ApiModelProperty(value = "Dados atualizados automaticamente")
     @PreUpdate
     public void onUpdate() {
         this.updateDate = LocalDateTime.now();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.profiles;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

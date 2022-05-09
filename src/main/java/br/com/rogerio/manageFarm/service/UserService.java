@@ -1,13 +1,17 @@
 package br.com.rogerio.manageFarm.service;
 
+import br.com.rogerio.manageFarm.dto.UserDto;
 import br.com.rogerio.manageFarm.dto.UserUpdateDto;
 import br.com.rogerio.manageFarm.model.User;
 import br.com.rogerio.manageFarm.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,12 +48,12 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> findAll() {
-        List<User> listUsers = repository.findAll();
+    public Page<UserDto> findAll(Pageable pageable) {
+        Page<User> listUsers = repository.findAll(pageable);
         if (listUsers.isEmpty()) {
             return null;
         }
-        return listUsers;
+        return listUsers.map(UserDto::new);
     }
 
     @Transactional
@@ -59,8 +63,8 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> findByName(String nome) {
-        List<User> listUsersByNome = repository.findByNameIgnoreCase(nome);
+    public Page<UserDto> findByName(String description, Pageable pageable) {
+        Page<UserDto> listUsersByNome = repository.findByNameIgnoreCase(description, pageable);
         if (listUsersByNome.isEmpty()) {
             return null;
         }

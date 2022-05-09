@@ -1,6 +1,9 @@
 package br.com.rogerio.manageFarm.repository;
 
+import br.com.rogerio.manageFarm.dto.UserDto;
 import br.com.rogerio.manageFarm.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +16,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.name like %:name%")
-    List<User> findByNameIgnoreCase(@Param("name") String string);
+    Page<UserDto> findByNameIgnoreCase(@Param("name") String string, Pageable pageable);
 
 //    @Query("SELECT u FROM User u WHERE u.username like :username")
     Optional<User> findByUsernameIgnoreCase(@Param("username") String email);
