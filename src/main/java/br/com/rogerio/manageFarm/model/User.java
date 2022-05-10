@@ -85,7 +85,7 @@ public class User implements UserDetails {
     @NotNull
     @NotEmpty
     @Length(min = 4, message = "A senha deve ter no mínimo 04(quatro) caracteres")
-    @Length(max = 8, message = "A senha deve ter no máximo 08(oito) caracteres")
+    @Length(max = 256, message = "A senha deve ter no máximo 256(oito) caracteres")
     @ApiModelProperty(value = "Senha do usuário")
     @Column(name = "SENHA")
     private String password;
