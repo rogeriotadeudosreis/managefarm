@@ -1,6 +1,7 @@
 package br.com.rogerio.manageFarm.controller;
 
 import br.com.rogerio.manageFarm.config.security.TokenService;
+import br.com.rogerio.manageFarm.dto.TokenDto;
 import br.com.rogerio.manageFarm.form.LoginForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +27,13 @@ public class AuthenticationControlller {
     private TokenService tokenService;
 
     @PostMapping
-    public ResponseEntity<?> autenticar(@RequestBody @Valid LoginForm form) {
+    public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginForm form) {
         UsernamePasswordAuthenticationToken dataLogin = form.convert();
         try {
             Authentication authentication = authManager.authenticate(dataLogin);
             String token = tokenService.gerarToken(authentication);
             System.out.println("token: " + token);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(new TokenDto(token, "Bearer"));
         } catch (AuthenticationException e) {
             return ResponseEntity.badRequest().build();
         }
