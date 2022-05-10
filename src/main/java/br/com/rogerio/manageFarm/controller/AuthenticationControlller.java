@@ -28,9 +28,9 @@ public class AuthenticationControlller {
 
     @PostMapping
     public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginForm form) {
-        UsernamePasswordAuthenticationToken dataLogin = form.convert();
+        UsernamePasswordAuthenticationToken dadosLogin = form.convert();
         try {
-            Authentication authentication = authManager.authenticate(dataLogin);
+            Authentication authentication = authManager.authenticate(dadosLogin);
             String token = tokenService.gerarToken(authentication);
             System.out.println("token: " + token);
             return ResponseEntity.ok(new TokenDto(token, "Bearer"));

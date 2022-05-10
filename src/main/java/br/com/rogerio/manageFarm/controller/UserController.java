@@ -117,7 +117,7 @@ public class UserController {
         Excluir um usuário do sistema pelo seu identificador
      */
     @DeleteMapping(path = "/excluir/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Exclui um registro de usuário.", notes = "Exclui um registro de usuário na base de dados.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Recurso não encontrado."),
@@ -127,7 +127,7 @@ public class UserController {
         User userExists = userService.findById(id);
         if (userExists != null) {
             userService.delete(id);
-            return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+            return ResponseEntity.ok(HttpStatus.OK);
         }
         return ResponseEntity.notFound().build();
     }

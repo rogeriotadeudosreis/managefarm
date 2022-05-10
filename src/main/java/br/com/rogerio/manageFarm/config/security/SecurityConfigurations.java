@@ -12,13 +12,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    AuthenticationService autenticationService;
+    AuthenticationService authenticationService;
 
     @Override
     @Bean
@@ -29,7 +30,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     // Configurações de autenticação
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(autenticationService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(authenticationService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
     // Configurações de Autorização
@@ -37,14 +38,12 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/user").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/user/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/user/listar/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/user/consultar-por-email/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/user/consultar-por-id/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/user/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().addFilterBefore(new AuthenticationViaTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     // Configurações de recursos estáticos(js, css, imagens, etc...não é o caso aqui nesta api)
