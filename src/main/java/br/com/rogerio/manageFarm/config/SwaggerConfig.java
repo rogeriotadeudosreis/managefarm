@@ -1,5 +1,6 @@
 package br.com.rogerio.manageFarm.config;
 
+import br.com.rogerio.manageFarm.model.User;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,7 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
 //                .paths(PathSelectors.ant("/api/*")) com o path /api/* não apresenta a documentação no browser, estranho.....
                 .build()
+                .ignoredParameterTypes(User.class)
                 .useDefaultResponseMessages(false)
                 .globalResponseMessage(RequestMethod.GET, responseMessageForGET())
                 .apiInfo(apiInfo());
