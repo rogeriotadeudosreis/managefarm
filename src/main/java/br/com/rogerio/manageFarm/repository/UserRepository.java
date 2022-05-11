@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.name like %:name%")
-    Page<UserDto> findByNameIgnoreCase(@Param("name") String string, Pageable pageable);
+    Page<User> findByNameIgnoreCase(@Param("name") String string, Pageable pageable);
 
 //    @Query("SELECT u FROM User u WHERE u.username like :username")
     Optional<User> findByUsernameIgnoreCase(String email);

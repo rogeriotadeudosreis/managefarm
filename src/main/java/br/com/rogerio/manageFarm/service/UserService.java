@@ -48,12 +48,12 @@ public class UserService {
     }
 
     @Transactional
-    public Page<UserDto> findAll(Pageable pageable) {
+    public Page<User> findAll(Pageable pageable) {
         Page<User> listUsers = repository.findAll(pageable);
         if (listUsers.isEmpty()) {
             return null;
         }
-        return listUsers.map(UserDto::new);
+        return listUsers;
     }
 
     @Transactional
@@ -63,8 +63,8 @@ public class UserService {
     }
 
     @Transactional
-    public Page<UserDto> findByName(String description, Pageable pageable) {
-        Page<UserDto> listUsersByNome = repository.findByNameIgnoreCase(description, pageable);
+    public Page<User> findByName(String description, Pageable pageable) {
+        Page<User> listUsersByNome = repository.findByNameIgnoreCase(description, pageable);
         if (listUsersByNome.isEmpty()) {
             return null;
         }

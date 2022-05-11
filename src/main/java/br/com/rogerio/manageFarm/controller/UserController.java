@@ -47,7 +47,7 @@ public class UserController {
      */
     @PostMapping(path = "/criar", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Armazena um registro de usuário.", notes = "Armazena o registro de user na base de dados.")
+    @ApiOperation(value = "Cria um registro de usuário.", notes = "Cria um registro de usuário na base de dados.")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Recurso criado.", response = User.class),
             @ApiResponse(code = 400, message = "Servidor não entendeu a requisição, pois está com uma sintaxe inválida."),
@@ -70,7 +70,7 @@ public class UserController {
      */
     @PutMapping(path = "/atualizar/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Altera um registro de usuário.", notes = "Altera o registro de user na base de dados.")
+    @ApiOperation(value = "Atualiza um registro de usuário.", notes = "Atualiza um registro de usuário na base de dados.")
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Recurso atualizado.", response = User.class),
             @ApiResponse(code = 400, message = "Servidor não entendeu a requisição, pois está com uma sintaxe inválida."),
@@ -93,7 +93,7 @@ public class UserController {
      */
     @GetMapping(path = "/listar", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Retorna uma lista de usuários.", notes = "Retorna uma lista de usuários da base de dados.")
+    @ApiOperation(value = "Consulta uma lista de usuários.", notes = "Consulta uma lista de usuários da base de dados.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok.", response = User.class),
             @ApiResponse(code = 204, message = "Sem retorno de dados"),
@@ -105,11 +105,11 @@ public class UserController {
             @PageableDefault(sort = "name", direction = Sort.Direction.ASC, page = 0, size = 10) Pageable paginacao) {
 
         if (descricao == null) {
-            Page<UserDto> lista = userService.findAll(paginacao);
-            return ResponseEntity.ok(lista);
+            Page<User> lista = userService.findAll(paginacao);
+            return ResponseEntity.ok(lista.map(UserDto::new));
         } else {
-            Page<UserDto> lista = userService.findByName(descricao, paginacao);
-            return ResponseEntity.ok(lista);
+            Page<User> lista = userService.findByName(descricao, paginacao);
+            return ResponseEntity.ok(lista.map(UserDto::new));
         }
     }
 
@@ -118,7 +118,7 @@ public class UserController {
      */
     @DeleteMapping(path = "/excluir/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Exclui um registro de usuário.", notes = "Exclui um registro de usuário na base de dados.")
+    @ApiOperation(value = "Deleta um registro de usuário.", notes = "Deleta um registro de usuário na base de dados.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Recurso não encontrado."),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
@@ -137,16 +137,17 @@ public class UserController {
      */
     @GetMapping(path = "/consultar-por-email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Retorna um registro de usuário pelo email.", notes = "Retorna um registro de usuário pelo email da base de dados.")
+    @ApiOperation(value = "Consulta um registro de usuário pelo email.", notes = "Consulta um registro de usuário pelo email da base de dados.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok.", response = User.class),
             @ApiResponse(code = 204, message = "Sem retorno de dados"),
             @ApiResponse(code = 404, message = "Recurso não encontrado."),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
     })
-    public ResponseEntity<User> consultarPorEmail(@PathVariable String email) {
+    public ResponseEntity<UserDto> consultarPorEmail(@PathVariable String email) {
         User userPorEmail = userService.findByEmail(email);
-        return ResponseEntity.ok().body(userPorEmail);
+        UserDto userDto = mapper.map(userPorEmail, UserDto.class);
+        return ResponseEntity.ok().body(userDto);
     }
 
     /*
@@ -154,15 +155,16 @@ public class UserController {
      */
     @GetMapping(path = "/consultar-por-id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Retorna um usuário pelo identificador.", notes = "Retorna um usuário pelo identificador da base de dados.")
+    @ApiOperation(value = "Consulta um usuário pelo identificador.", notes = "Consulta um usuário pelo identificador da base de dados.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok.", response = User.class),
             @ApiResponse(code = 204, message = "Sem retorno de dados"),
             @ApiResponse(code = 404, message = "Recurso não encontrado."),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção no servidor.")
     })
-    public ResponseEntity<User> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<UserDto> buscarPorId(@PathVariable Long id) {
         User user = userService.findById(id);
-        return ResponseEntity.ok(user);
+        UserDto userDto = mapper.map(user, UserDto.class);
+        return ResponseEntity.ok(userDto);
     }
 }
