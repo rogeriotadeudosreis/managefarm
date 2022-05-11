@@ -33,9 +33,9 @@ public class AuthenticationViaTokenFilter extends OncePerRequestFilter {
 
         boolean valid = tokenService.isTokenValid(token);
         System.out.println("token do cliente: " + token);
-        System.out.println("Token isValid: " + valid);
 
         if (valid) {
+            System.out.println("Token válido dentro do if: " + valid);
             autenticarCliente(token);
         }
 
@@ -46,7 +46,7 @@ public class AuthenticationViaTokenFilter extends OncePerRequestFilter {
     private void autenticarCliente(String token) {
 
         Long idUsuario = tokenService.getIdUsuario(token);
-        User usuario = repository.getOne(idUsuario);
+        User usuario = repository.findById(idUsuario).get();
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
