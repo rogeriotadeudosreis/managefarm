@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
@@ -18,6 +19,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -29,14 +31,21 @@ import java.util.List;
 @ConfigurationProperties
 public class SwaggerConfig {
     @Bean
-    public Docket api() {
+    public Docket manageFarmApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("br.com.rogerio.manageFarm.controller"))
                 .paths(PathSelectors.any())
-//                .paths(PathSelectors.ant("/api/*")) com o path /api/* não apresenta a documentação no browser, estranho.....
                 .build()
                 .ignoredParameterTypes(User.class)
+                .globalOperationParameters(Arrays.asList(
+                        new ParameterBuilder()
+                                .name("Authorization")
+                                .description("Header to token JWT")
+                                .modelRef(new ModelRef("string"))
+                                .parameterType("header")
+                                .required(false)
+                                .build()))
                 .useDefaultResponseMessages(false)
                 .globalResponseMessage(RequestMethod.GET, responseMessageForGET())
                 .apiInfo(apiInfo());
