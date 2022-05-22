@@ -20,6 +20,8 @@ public class AuthenticationViaTokenFilter extends OncePerRequestFilter {
 
     private UserRepository repository;
 
+    private String origemPermitida = "http://localhost:4200";
+
     public AuthenticationViaTokenFilter(TokenService tokenService, UserRepository repository) {
         this.tokenService = tokenService;
         this.repository = repository;
@@ -28,6 +30,9 @@ public class AuthenticationViaTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+//        response.setHeader("Access-Control-Allow-Origin", origemPermitida);
+//        response.setHeader("Access-Control-Allow-Credentials", "false");
 
         String token = recuperarToken(request);
 

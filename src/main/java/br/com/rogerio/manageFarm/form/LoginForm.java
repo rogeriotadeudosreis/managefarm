@@ -8,11 +8,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @Getter
 public class LoginForm {
 
-    private String email;
+    private String username;
 
-    private String senha;
+    private String password;
 
     public UsernamePasswordAuthenticationToken convert() {
-        return new UsernamePasswordAuthenticationToken(email, senha);
+        return new UsernamePasswordAuthenticationToken(username, password);
     }
 }
