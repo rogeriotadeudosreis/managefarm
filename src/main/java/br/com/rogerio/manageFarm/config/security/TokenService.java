@@ -27,6 +27,7 @@ public class TokenService {
         return Jwts.builder()
                 .setIssuer("API ManageFarm")
                 .setSubject(logado.getId().toString())
+                .setSubject(logado.getName())
                 .setIssuedAt(hoje)
                 .setExpiration(dataExpiracao)
                 .signWith(SignatureAlgorithm.HS256, secret)
@@ -46,4 +47,5 @@ public class TokenService {
         Claims claims =  Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
         return Long.parseLong(claims.getSubject());
     }
+
 }

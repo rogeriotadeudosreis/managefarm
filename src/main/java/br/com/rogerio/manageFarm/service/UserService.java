@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,10 +27,14 @@ public class UserService {
 
     private final ModelMapper mapper;
 
+    @Autowired
+    private PasswordEncoder encoder;
+
     @Transactional
     public User create(User user) {
         System.out.println(verifyUserExists(user));
         verifyUserExists(user);
+        user.setPassword(encoder.encode(user.getPassword()));
         User userSave = repository.save(user);
         return userSave;
     }
